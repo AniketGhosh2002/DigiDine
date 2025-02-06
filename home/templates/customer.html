@@ -77,7 +77,7 @@ document.getElementById('customerForm').addEventListener('submit', function(even
     const tableNumber = document.getElementById('tableNumber').value;
     const persons = document.getElementById('persons').value;
 
-    fetch('/restaurent/api/customer', {
+    fetch('/restaurent/api/customers', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
