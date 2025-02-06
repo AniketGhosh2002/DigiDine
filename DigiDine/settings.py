@@ -53,6 +53,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'DigiDine.urls'
 
+CORS_ALLOWED_ORIGINS = [
+    "https://digidinerestaurant.onrender.com",
+]
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
