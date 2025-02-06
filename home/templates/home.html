@@ -67,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function createOrder() {
     const customer = "{{ customer_id }}";
-    fetch("{% url 'orderview' %}", {
+    fetch('/restaurent/api/order/', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ customer_id: customer })

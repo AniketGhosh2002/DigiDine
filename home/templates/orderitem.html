@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const submitButton = this.querySelector('button[type="submit"]');
             submitButton.disabled = true;
   
-            fetch("{% url 'orderitemview' %}", {
+            fetch('/restaurent/api/orderitem/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

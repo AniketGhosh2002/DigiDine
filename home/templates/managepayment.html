@@ -55,24 +55,21 @@ Digidine |  Manage Payment
 </div>
 
     <script>
-        // Function to handle form submission via AJAX
         function submitPayment(event) {
             event.preventDefault();
 
             const amount = document.getElementById("amount").value;
             const order = document.getElementById("order").value;
 
-            const data = {
-                amount: parseFloat(amount),
-                order: parseInt(order)
-            };
-
-            fetch("{% url 'paymentview' %}", {
+            fetch('/restaurent/api/payment/', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify({
+                    amount: parseFloat(amount),
+                    order: parseInt(order)
+                })
             })
             .then(response => response.json())
             .then(data => {
