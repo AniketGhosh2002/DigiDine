@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Digidine | Order
+{% endblock %}
+
+{% block content %}
+<nav class="navbar fixed-top" style="background-color: #513430;">
+    <div class="container-fluid d-flex justify-content-between">
+        <a class="navbar-brand" href="#" onclick="window.location.reload();" style="color: #f0ca75;">DigiDine</a>
+        <a href="http://127.0.0.1:8000/home/{{ order.customer_id.id }}/" class="btn" style="background-color: #f0ca75; color: #513430;">Back</a>
+    </div>
+</nav>
+
+<div class="container" style="margin-top: 100px;">
+    <h1 class="text-center mb-4">Order Dishes</h1>
+    <div class="cuisine-list">
+        {% for cuisine in cuisines %}
+            <div class="mb-4 cuisine-container" data-category="{{ cuisine.category }}">
+            <h2 class="text">{{ cuisine.name }}</h2>
+                <div class="row">
+                    {% for dish in cuisine.dish_set.all %}
+                        {% if dish.avaibility %}
+                            <div class="col-md-4 d-flex align-items-stretch">
+                                <div class="card mb-2 shadow-sm ">
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="d-flex justify-content-between">
+                                            <h5 class="card-title">{{ dish.name }}</h5>
+                                            <p class="card-text"><strong>Price:</strong> Rs. {{ dish.price }}</p>
+                                        </div>                    
+                                        <p class="card-text">
+                                            <small class="text">Cooking Time: {{ dish.cooking_time }}</small>
+                                        </p>
+                                        <form class="orderForm mt-auto">
+                                            <input type="hidden" name="dish_id" value="{{ dish.id }}">
+                                            <input type="hidden" name="dish_name" value="{{ dish.name }}">
+                                            <div class="form-group input-group-sm d-flex align-items-center">
+                                                <label for="quantity-{{ dish.id }}" class="mr-2">Quantity</label>
+                                                <input type="number" id="quantity-{{ dish.id }}" name="quantity" min="1" value="1" class="form-control w-25">
+                                                <button type="submit" class="btn btn-primary btn-sm ml-4">Add to Order</button>
+                                            </div>
+                                        </form>                  
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+  
+<div id="toast-container" aria-live="polite" aria-atomic="true">
+    <div class="toast" data-delay="3000">
+        <div class="toast-header">
+            <strong class="mr-auto text" style="color: #f0ca75;">Success</strong>
+            <small>Just now</small>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body">
+            Dish added to order!
+        </div>
+    </div>
+</div>
+  
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const categoryOrder = ["starter", "main course", "side dish", "dessert", "drinks"];
+    let cuisineContainers = Array.from(document.querySelectorAll(".cuisine-container"));
+  
+    cuisineContainers.sort((a, b) => {
+        let categoryA = a.getAttribute("data-category").toLowerCase();
+        let categoryB = b.getAttribute("data-category").toLowerCase();
+        return categoryOrder.indexOf(categoryA) - categoryOrder.indexOf(categoryB);
+    });
+  
+    const parentContainer = document.querySelector(".cuisine-list");
+    parentContainer.innerHTML = "";
+    cuisineContainers.forEach(cuisine => parentContainer.appendChild(cuisine));
+  
+    const pathParts = window.location.pathname.split('/');
+    const orderId = pathParts[pathParts.length - 2];
+  
+    document.querySelectorAll('.orderForm').forEach(form => {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+  
+            const dishId = this.querySelector('input[name="dish_id"]').value;
+            const quantity = this.querySelector('input[name="quantity"]').value;
+            const submitButton = this.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+  
+            fetch('http://127.0.0.1:8000/restaurent/api/orderitem/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    order: orderId,
+                    dish: dishId,
+                    quantity: quantity
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                $('.toast').toast('show');
+                submitButton.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                submitButton.disabled = false;
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Digidine | Guest
+{% endblock %}
+
+{% block content %}
+<nav class="navbar fixed-top" style="background-color: #513430;">
+    <div class="container-fluid d-flex justify-content-between">
+      <h2 style="color: #f0ca75;">DigiDine</h2>
+    </div>
+</nav>
+
+<div class="container" style="margin-top: 100px;">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header">
+                    <h3 class="mb-0">Guest Form</h3>
+                </div>
+                <div class="card-body">
+                    <form id="customerForm">
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="name" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="tableNumber">Table Number:</label>
+                            <input type="number" id="tableNumber" name="tableNumber" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="persons">Number of Persons:</label>
+                            <input type="number" id="persons" name="persons" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-block">Submit</button>
+                    </form>
+                </div>
+            </div>
+            <p class="comments">Your table is waiting! Fill out the form and get ready to experience an unforgettable dining moment.</p>
+        </div>
+    </div>
+</div>
+
+<div id="toast-container" aria-live="polite" aria-atomic="true">
+    <div id="successToast" class="toast" data-delay="3000">
+        <div class="toast-header">
+            <strong class="mr-auto text" style="color: #f0ca75;">Success</strong>
+            <small class="text">Just now</small>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body">
+            We can't wait to serve you!
+        </div>
+    </div>
+
+    <div id="errorToast" class="toast" data-delay="3000">
+        <div class="toast-header">
+            <strong class="mr-auto text" style="color: #f0ca75;">Error</strong>
+            <small class="text-muted">Just now</small>
+            <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="toast-body">
+            Oops! Failed to submit the form. Please try again.
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('customerForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const tableNumber = document.getElementById('tableNumber').value;
+    const persons = document.getElementById('persons').value;
+
+    fetch('http://127.0.0.1:8000/restaurent/api/customer/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            name: name,
+            table_number: tableNumber,
+            persons: persons
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        $('#successToast').toast('show');
+        setTimeout(() => {
+            window.location.href = `http://127.0.0.1:8000/home/${data.id}/`;
+        }, 3000);
+    })
+    .catch((error) => {
+        $('#errorToast').toast('show');
+    });
+});
+</script>
+{% endblock %}

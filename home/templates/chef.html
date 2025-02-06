@@ -1,0 +1,117 @@
+
+{% extends 'base.html' %}
+
+
+{% block title %}
+Digidine | Chef
+{% endblock %}
+
+{% block content %}
+<header class="text-center">
+    <h4 style="color: #f0ca75;">DigiDine Chef's Dashboard</h4>
+</header>
+
+<main class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="card shadow">
+                <div class="card-header">Chef Information</div>
+                    <div class="card-body">
+                        <p class="card-text"><strong>ID:</strong> {{ chefs.id }}</p>
+                        <p class="card-text"><strong>Name:</strong> {{ chefs.name }}</p>
+                        <p class="card-text"><strong>Speciality:</strong> {{ chefs.speciality }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <div class="card shadow">
+                    <div class="card-header">Cuisines</div>
+                        <div class="card-body">
+                            <ol class="list-group">
+                                {% for cuisine in cuisines %}
+                                    <li class="list-group-item">{{ cuisine.name }}</li>
+                                {% empty %}
+                                    <li class="list-group-item">No cuisines available.</li>
+                                {% endfor %}
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section>
+                <div class="card shadow">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span>Dishes to Prepare</span>
+                    </div>          
+                    <div class="card-body">
+                        <ol class="list-group" id="dishes-list">
+                            {% for order_item in orders %}
+                                <li class="list-group-item d-flex justify-content-between align-items-center dish-item" 
+                                    data-orderitem-id="{{ order_item.id }}" 
+                                    data-dish-name="{{ order_item.dish.name|lower }}">
+                                    <div>
+                                        <p><small>
+                                            {{ order_item.quantity }} x {{ order_item.dish.name }} 
+                                            <span class="badge badge-done">{{ order_item.dish.cuisine.name }}</span>
+                                            <br> {{ order_item.order.order_time|date:"d/m/Y g:i A" }} 
+                                            | Table - {{order_item.order.customer_id.table_number}}
+            
+                                            {% for customer in customers %}
+                                                {% if customer.id == order_item.order.customer_id.id %}
+                                                    | {{ customer.name }}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </small></p>
+                                    </div>
+                                    <div>
+                                        {% if not order_item.is_done %}
+                                            <button class="btn btn-warning btn-sm mark-done-btn" data-id="{{ order_item.id }}">Pending</button>
+                                        {% else %}
+                                            <span class="badge badge-done">Completed</span>
+                                        {% endif %}
+                                    </div>
+                                </li>
+                            {% empty %}
+                                <li class="list-group-item">No dishes to prepare at the moment.</li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                </div>
+            </section>
+            
+            
+            
+            
+        </div>
+    </div>
+</main>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('.mark-done-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const orderItemId = this.getAttribute('data-id');
+            fetch(`http://127.0.0.1:8000/restaurent/api/orderitem/${orderItemId}/`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ "is_done": true })
+            })
+            .then(response => response.json())
+            .then(data => {
+            if (data.success) {
+              const listItem = document.querySelector(`li[data-orderitem-id="${orderItemId}"]`);
+              listItem.querySelector('.mark-done-btn').outerHTML = '<span class="badge badge-done">Completed</span>';
+            } else {
+              console.error('Failed to mark as done', data);
+            }
+            })
+            .then(location.reload())
+            .catch(error => console.error('Error:', error));
+        });
+    });
+});
+</script>
+{% endblock %}

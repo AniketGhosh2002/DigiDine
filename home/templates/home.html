@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Digidine | Home
+{% endblock %}
+
+{% block content %}
+<nav class="navbar fixed-top" style="background-color: #513430;">
+    <div class="container-fluid d-flex justify-content-between">
+        <a class="navbar-brand" href="#" onclick="window.location.reload();" style="color: #f0ca75;">DigiDine</a>
+        {% for customer in customers %}
+            {% if customer.id == customer_id %}
+                <span class="navbar-brand mb-0 h4" style="color: #f0ca75;">Table {{ customer.table_number }}</span>
+            {% endif %}
+        {% endfor %}
+        <div>
+        <button class="btn" style="background-color: #f0ca75; color: #513430;" onclick="createOrder()">Order</button>
+        {% if orders %}
+            <a href="http://127.0.0.1:8000/payments/{{ customer_id }}/" class="btn" style="background-color: #f0ca75; color: #513430;">Pay</a>
+        {% endif %}
+        </div>
+    </div>
+</nav>
+
+  
+<div class="container" style="margin-top: 100px;">
+    <h2 class="text-center mb-4" style="color: #513430;">Cuisines and Dishes</h2>
+    {% for cuisine in cuisines %}
+        <div class="mb-4">
+            <h3 class="text" style="color: #513430;">{{ cuisine.name }}</h3>
+            <div class="row">
+                {% for dish in cuisine.dish_set.all %}
+                    {% if dish.avaibility %}
+                        <div class="col-md-4 d-flex align-items-stretch">
+                            <div class="card mb-4 shadow-sm w-100" style="border: 2px solid #513430; background-color: #f0ca75; color: #513430;">
+                                <img src="{{ dish.image.url }}" class="card-img-top" alt="{{ dish.name }}" style="width: 100%; height: 350px; object-fit: cover;" />
+                                <div class="card-body">
+                                    <h5 class="card-title" style="color: #513430;">{{ dish.name }}</h5>
+                                    <p class="card-text" style="color: #513430;">{{ dish.description }}</p>
+                                    <p class="card-text" style="color: #513430;"><strong>Price:</strong> Rs. {{ dish.price }}</p>
+                                    <p class="card-text" style="color: #513430;"><small class="text">Cooking Time: {{ dish.cooking_time }}</small></p>
+                                </div>
+                            </div>                  
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const categoryOrder = ["starter", "main course", "side dish", "dessert", "drink"];
+    let cuisineContainers = Array.from(document.querySelectorAll(".cuisine-container"));
+
+    cuisineContainers.sort((a, b) => {
+        let categoryA = a.getAttribute("data-category").toLowerCase();
+        let categoryB = b.getAttribute("data-category").toLowerCase();
+        return categoryOrder.indexOf(categoryA) - categoryOrder.indexOf(categoryB);
+    });
+
+    const parentContainer = document.querySelector(".cuisine-list");
+    parentContainer.innerHTML = "";
+    cuisineContainers.forEach(cuisine => parentContainer.appendChild(cuisine));
+});
+
+function createOrder() {
+    const customer = "{{ customer_id }}";
+    fetch('http://127.0.0.1:8000/restaurent/api/order/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customer_id: customer })
+    })
+    .then(response => response.json())
+    .then(data => {
+        window.location.href = `http://127.0.0.1:8000/orderitems/${data.id}/`;
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+}
+</script>
+{% endblock %}
