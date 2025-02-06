@@ -67,7 +67,7 @@ Digidine |  Manage Payment
                 order: parseInt(order)
             };
 
-            fetch("http://127.0.0.1:8000/restaurent/api/payment/", {
+            fetch("{% url 'paymentview' %}", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

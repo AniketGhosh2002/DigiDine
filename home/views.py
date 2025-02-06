@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from home.models import Dish, Order, OrderItem, Customer, Cuisine, Chef, Payment
 from rest_framework import viewsets
+from rest_framework.views import APIView
 from .serializers import DishSerializer, OrderSerializer, OrderItemSerializer, CustomerSerializer, CuisineSerializer, ChefSerializer, PaymentSerializer
 import qrcode
 import base64
 from io import BytesIO
+from rest_framework.response import Response
 
 class DishViewSet(viewsets.ModelViewSet):
     queryset = Dish.objects.all()
@@ -33,6 +35,53 @@ class ChefViewSet(viewsets.ModelViewSet):
 class PaymentViewSet(viewsets.ModelViewSet):
     queryset = Payment.objects.all()
     serializer_class = PaymentSerializer
+
+
+class CustomerView(APIView):
+    def post(self, request):
+        serializer = CustomerSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+    
+class OrderView(APIView):
+    def post(self, request):
+        serializer = OrderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+class OrderItemView(APIView):
+    def post(self, request):
+        serializer = OrderItemSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+class OrderItemDetailView(APIView):
+    def patch(self, request, pk):
+        try:
+            order_item = OrderItem.objects.get(pk=pk)
+        except OrderItem.DoesNotExist:
+            return Response({'error': 'OrderItem not found'}, status=404)
+
+        serializer = OrderItemSerializer(order_item, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors)
+
+class PaymentView(APIView):
+        def post(self, request):
+            serializer = PaymentSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors)
+
 
 def customers(request):
     return render(request, 'customer.html')

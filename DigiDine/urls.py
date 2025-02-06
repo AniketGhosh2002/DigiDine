@@ -22,6 +22,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from home import views
 
+
 router = DefaultRouter()
 router.register(r'dish', DishViewSet)
 router.register(r'order', OrderViewSet)
@@ -33,8 +34,8 @@ router.register(r'payment', PaymentViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/', include('home.urls')),
     path('restaurent/api/', include(router.urls)),
-    path('restaurent/api/customers', views.CustomerViewSet.as_view(), name='customerview'),
     path('home/<int:customer_id>/', views.home, name='home'),
     path('', views.customers, name='customers'),
     path('orderitems/<int:order_id>/', views.orderitems, name='orderitems'),

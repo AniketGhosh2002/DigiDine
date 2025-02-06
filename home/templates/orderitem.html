@@ -8,7 +8,7 @@ Digidine | Order
 <nav class="navbar fixed-top" style="background-color: #513430;">
     <div class="container-fluid d-flex justify-content-between">
         <a class="navbar-brand" href="#" onclick="window.location.reload();" style="color: #f0ca75;">DigiDine</a>
-        <a href="http://127.0.0.1:8000/home/{{ order.customer_id.id }}/" class="btn" style="background-color: #f0ca75; color: #513430;">Back</a>
+        <a href="/home/{{ order.customer_id.id }}/" class="btn" style="background-color: #f0ca75; color: #513430;">Back</a>
     </div>
 </nav>
 
@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const submitButton = this.querySelector('button[type="submit"]');
             submitButton.disabled = true;
   
-            fetch('http://127.0.0.1:8000/restaurent/api/orderitem/', {
+            fetch("{% url 'orderitemview' %}", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

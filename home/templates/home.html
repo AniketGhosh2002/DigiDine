@@ -16,13 +16,13 @@ Digidine | Home
         <div>
         <button class="btn" style="background-color: #f0ca75; color: #513430;" onclick="createOrder()">Order</button>
         {% if orders %}
-            <a href="http://127.0.0.1:8000/payments/{{ customer_id }}/" class="btn" style="background-color: #f0ca75; color: #513430;">Pay</a>
+            <a href="/payments/{{ customer_id }}/" class="btn" style="background-color: #f0ca75; color: #513430;">Pay</a>
         {% endif %}
         </div>
     </div>
 </nav>
 
-  
+
 <div class="container" style="margin-top: 100px;">
     <h2 class="text-center mb-4" style="color: #513430;">Cuisines and Dishes</h2>
     {% for cuisine in cuisines %}
@@ -67,14 +67,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function createOrder() {
     const customer = "{{ customer_id }}";
-    fetch('http://127.0.0.1:8000/restaurent/api/order/', {
+    fetch("{% url 'orderview' %}", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ customer_id: customer })
     })
     .then(response => response.json())
     .then(data => {
-        window.location.href = `http://127.0.0.1:8000/orderitems/${data.id}/`;
+        window.location.href = `/orderitems/${data.id}/`;
     })
     .catch((error) => {
         console.error('Error:', error);
