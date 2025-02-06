@@ -34,6 +34,7 @@ router.register(r'payment', PaymentViewSet)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('restaurent/api/', include(router.urls)),
+    path('restaurent/api/customers', views.CustomerViewSet, name='customerview'),
     path('home/<int:customer_id>/', views.home, name='home'),
     path('', views.customers, name='customers'),
     path('orderitems/<int:order_id>/', views.orderitems, name='orderitems'),
