@@ -89,11 +89,10 @@ document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.mark-done-btn').forEach(button => {
         button.addEventListener('click', function () {
             const orderItemId = this.getAttribute('data-id');
-            fetch(`/api/orderitems/${orderItemId}`, {
+            fetch(`/restaurent/api/orderitem/${orderItemId}/`, {
                 method: 'PATCH',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
-                    "id": orderItemId,
                     "is_done": true })
             })
             .then(response => response.json())
