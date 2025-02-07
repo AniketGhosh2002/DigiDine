@@ -157,11 +157,11 @@
 <script>
     function downloadReceipt() {
         const receipt = document.getElementById('receipt');
-        const paymentId = document.getElementById('paymentId').innerText.trim(); // Get text content
+        const paymentId = document.getElementById('paymentId').innerText.trim(); 
 
         html2canvas(receipt).then(canvas => {
             let link = document.createElement('a');
-            link.download = `DigiDine_${paymentId}.jpg`; // Use the text content
+            link.download = `DigiDine_${paymentId}.jpg`; 
             link.href = canvas.toDataURL('image/jpeg');
             link.click();
         });
