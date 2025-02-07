@@ -59,40 +59,37 @@
         </div>
 
 
-<div class="card shadow mt-3">
-    <div class="card-header">
-        <strong>Payments</strong>
-    </div>
-    <div class="card-body">
-        {% if payments %}
         <div class="card shadow mt-3">
             <div class="card-header">
-                <strong>Payment Receipt</strong>
-            </div>
-            <div class="card-body" id="receipt">
-                <div class="text-center mb-3">
-                    <h3 class="mb-0">DigiDine</h3>
-                    <small>Thank you for dining with us!</small>
+            <strong>Payments</strong>
+        </div>
+        <div class="card-body">
+        {% if payments %}
+            <div class="card shadow mt-3">
+                <div class="card-header">
+                    <strong>Payment Receipt</strong>
                 </div>
-        
-                <p><strong>Guest:</strong> {{ customer.name }}</p>
-                <p><strong>Table Number:</strong> {{ customer.table_number }}</p>
-                <p><strong>Persons:</strong> {{ customer.persons }}</p>
-                <hr>
-        
-                <!-- Orders & Items in Receipt -->
-                {% for order in orders %}
-                {% if order.id in paid_order_ids %}
-                    <h5><strong>Order ID:</strong> {{ order.id }}</h5>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Dish</th>
-                                <th>Quantity</th>
-                                <th>Price</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                <div class="card-body" id="receipt">
+                    <div class="text-center mb-3">
+                        <h3 class="mb-0">DigiDine</h3>
+                        <small>Thank you for dining with us!</small>
+                    </div>
+                    <p><strong>Guest:</strong> {{ customer.name }}</p>
+                    <p><strong>Table Number:</strong> {{ customer.table_number }}</p>
+                    <p><strong>Persons:</strong> {{ customer.persons }}</p>
+                    <hr>
+                    {% for order in orders %}
+                        {% if order.id in paid_order_ids %}
+                            <h5><strong>Order ID:</strong> {{ order.id }}</h5>
+                            <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Dish</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
                             {% for item in order_items %}
                                 {% if item.order.id == order.id %}
                                     <tr>
@@ -102,20 +99,20 @@
                                     </tr>
                                 {% endif %}
                             {% endfor %}
-                        </tbody>
-                    </table>
-                    <p class="text-end"><strong>Total Bill:</strong> Rs. 
-                        {% for order_id, total in order_totals.items %}
-                            {% if order_id == order.id %}
-                                {{ total }}
-                            {% endif %}
-                        {% endfor %}
-                    </p>
+                            </tbody>
+                            </table>
+                            <p class="text-end"><strong>Total Bill:</strong> Rs. 
+                            {% for order_id, total in order_totals.items %}
+                                {% if order_id == order.id %}
+                                    {{ total }}
+                                {% endif %}
+                            {% endfor %}
+                            </p>
+                        {% endif %}
+                    {% endfor %}
                     <hr>
-                {% endif %}
-                {% endfor %}
-                <h5 class="mt-4"><strong>Payment Details</strong></h5>
-                <table class="table">
+                    <h5 class="mt-4"><strong>Payment Details</strong></h5>
+                    <table class="table">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -134,12 +131,10 @@
                     </tbody>
                 </table>
             </div>
-        
             <div class="card-footer text-end">
-                <button class="btn btn-primary" onclick="downloadReceipt()">Download Receipt</button>
+                <button class="btn btn-block" onclick="downloadReceipt()">Download Receipt</button>
             </div>
         </div>
-        
         {% else %}
         <div class="row align-items-center">
             <div class="col-md-6">
@@ -149,7 +144,6 @@
                 <p><small>Accepted payments by any UPI app</small></p>
             </div>
             
-            
             <div class="col-md-6 text-end">
                 <img src="data:image/png;base64,{{ qr_code_url }}" alt="UPI QR Code" class="img-fluid" width="300">
                 <p class="mt-2">Scan the QR code to complete the payment.</p>
@@ -157,15 +151,13 @@
         </div>
         {% endif %}
     </div>
-</div>
-
-{% endif %} 
+    {% endif %} 
 </div>
 
 <script>
     function downloadReceipt() {
         const receipt = document.getElementById('receipt');
-        const customerName = 'P{{ payment.id }}-O{{ order.id }}'.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+        const customerName = 'I{{customer.id}}T{{customer.table_number}}'.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
         html2canvas(receipt).then(canvas => {
             let link = document.createElement('a');
             link.download = `Receipt_${customerName}.png`;
