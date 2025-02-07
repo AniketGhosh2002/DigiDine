@@ -123,7 +123,7 @@
                     <tbody>
                         {% for payment in payments %}
                         <tr>
-                            <td>P{{ payment.id }}-O{{ payment.order.id }}</td>
+                            <td id="paymentId">P{{ payment.id }}O{{ payment.order.id }}</td>
                             <td>Rs. {{ payment.amount }}</td>
                             <td>{{ payment.payment_time|date:"d/m/Y g:i A" }}</td>
                         </tr>
@@ -157,11 +157,12 @@
 <script>
     function downloadReceipt() {
         const receipt = document.getElementById('receipt');
-        const customerName = 'I{{customer.id}}T{{customer.table_number}}'.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+        const paymentId = document.getElementById('paymentId').innerText.trim(); // Get text content
+
         html2canvas(receipt).then(canvas => {
             let link = document.createElement('a');
-            link.download = `Receipt_${customerName}.png`;
-            link.href = canvas.toDataURL('image/png');
+            link.download = `DigiDine_${paymentId}.jpg`; // Use the text content
+            link.href = canvas.toDataURL('image/jpeg');
             link.click();
         });
     }
